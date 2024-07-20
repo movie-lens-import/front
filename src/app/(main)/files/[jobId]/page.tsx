@@ -37,8 +37,22 @@ export default function Page() {
           <DetailItem label="Job ID" value={jobId} />
           <DetailItem label="Filename" value={data.task.name} />
           <DetailItem label="Table name" value={data.task.table_name} />
-          <DetailItem label="Rows failed" value={data.task.rows_failed} />
-          <DetailItem label="Rows inserted" value={data.task.rows_inserted} />
+          <DetailItem
+            label="Rows failed"
+            value={
+              data.task.status !== "completed"
+                ? "Still in progress"
+                : data.task.rows_failed
+            }
+          />
+          <DetailItem
+            label="Rows inserted"
+            value={
+              data.task.status !== "completed"
+                ? "Still in progress"
+                : data.task.rows_inserted
+            }
+          />
         </Column>
 
         <Column>
@@ -48,11 +62,22 @@ export default function Page() {
           />
           <DetailItem
             label="Elapsed time"
-            value={`${data.task.processing_time} seconds`}
+            value={
+              data.task.status !== "completed"
+                ? "Still in progress"
+                : `${data.task.processing_time} seconds`
+            }
           />
           <DetailItem label="Created at" value={data.task.created_at} />
           <DetailItem label="Updated at" value={data.task.updated_at} />
-          <DetailItem label="Completed at" value={data.task.completed_at} />
+          <DetailItem
+            label="Completed at"
+            value={
+              data.task.status !== "completed"
+                ? "Still in progress"
+                : data.task.completed_at
+            }
+          />
         </Column>
       </div>
     </main>

@@ -10,7 +10,10 @@ export function PageSkeleton() {
     <main className="flex flex-col min-h-screen w-full gap-6 pt-6 pl-10">
       <header>
         <PageTitle title="Details" />
-        <PageSubtitle title="Monitor the status of your files processing and manage their progress from this page" />
+        <PageSubtitle
+          title="Keep track of the status and results of your file processing tasks.
+"
+        />
       </header>
 
       <div className="flex">
