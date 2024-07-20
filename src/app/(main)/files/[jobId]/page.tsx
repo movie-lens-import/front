@@ -8,6 +8,7 @@ import { Column } from "./_components/column";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 import { useParams } from "next/navigation";
+import { PageSkeleton } from "./_components/page-skeleton";
 
 export default function Page() {
   const { jobId } = useParams();
@@ -17,14 +18,18 @@ export default function Page() {
   );
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return <PageSkeleton />;
+  }
+
+  if (error) {
+    return <div>Error loading data</div>;
   }
 
   return (
     <main className="flex flex-col min-h-screen w-full gap-6 pt-6 pl-10">
       <header>
         <PageTitle title="Details" />
-        <PageSubtitle title="Monitor the status of your files processing and manage their progress from this page" />
+        <PageSubtitle title="Keep track of the status and results of your file processing tasks." />
       </header>
 
       <div className="flex">
