@@ -1,9 +1,9 @@
-import { FileForm } from "./_components/file-form";
+import { PageTitle } from "./_components/page-title";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      Home
+    <main className="flex flex-col min-h-screen w-full gap-6 pt-6 pl-10">
+      <PageTitle title="Home" />
     </main>
   );
 }
