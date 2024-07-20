@@ -32,5 +32,11 @@ export default async function fileSubmit(formData: FormData) {
     }
 
     writeStream.end();
+
+    await fetch(`${process.env.FLASK_API_URL}/convert`, {
+      method: "POST",
+      body: JSON.stringify({ name, table: "ratings" }),
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

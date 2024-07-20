@@ -78,7 +78,6 @@ export function useFileForm() {
   useEffect(() => {
     if (Math.floor(uploadProgress) == 100) {
       setSelectedFile(null);
-      // Reset the file input
       if (fileInput.current) {
         fileInput.current.value = "";
       }
