@@ -1,8 +1,6 @@
-import fetchTasks from "@/actions/fetch-tasks";
 import { PageTitle } from "@/app/_components/page-title";
 import { TaskList } from "./_components/task-list";
 import { PageSubtitle } from "@/app/_components/page-subtitle";
-import { TaskListServer } from "./_components/task-list-server";
 
 export default async function Page() {
   return (

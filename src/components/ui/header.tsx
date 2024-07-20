@@ -104,10 +104,9 @@ export const NavItem = ({
   <Link
     href={href}
     className={cn([
-      "flex items-center gap-3 w-full px-4 py-3 text-muted-foreground hover:bg-zinc-200 rounded",
+      "flex items-center gap-3 w-full px-4 py-3 font-medium text-muted-foreground hover:bg-zinc-200 rounded",
       className,
-      active &&
-        "bg-zinc-200 text-black font-medium hover:bg-zinc-300 hover:text-black",
+      active && "bg-zinc-200 text-black hover:bg-zinc-300 hover:text-black",
     ])}
   >
     {children}

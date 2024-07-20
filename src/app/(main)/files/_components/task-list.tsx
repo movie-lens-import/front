@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,20 +9,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetcher } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn, fetcher } from "@/lib/utils";
 import useSWR from "swr";
-
-interface Task {
-  id: number;
-  name: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  completed_at: string;
-  result: string | null;
-  table_name: string;
-  job_id: string;
-}
+import { TbExternalLink } from "react-icons/tb";
+import Link from "next/link";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Task } from "@/@types/task";
 
 export function TaskList() {
   const { data, error, isLoading } = useSWR(
@@ -33,62 +32,85 @@ export function TaskList() {
   );
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="uppercase text-xs font-semibold tracking-wide">
-            Filename
-          </TableHead>
-          <TableHead className="uppercase text-xs font-semibold tracking-wide">
-            Status
-          </TableHead>
-          <TableHead className="uppercase text-xs font-semibold tracking-wide">
-            Created at
-          </TableHead>
-          <TableHead className="uppercase text-xs font-semibold tracking-wide">
-            Updated at
-          </TableHead>
-          <TableHead className="uppercase text-xs font-semibold tracking-wide">
-            Completed at
-          </TableHead>
-        </TableRow>
-      </TableHeader>
+    <TooltipProvider>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide">
+              Filename
+            </TableHead>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide">
+              Status
+            </TableHead>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide">
+              Created at
+            </TableHead>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide">
+              Updated at
+            </TableHead>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide">
+              Completed at
+            </TableHead>
+            <TableHead className="uppercase text-xs font-semibold tracking-wide"></TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <TableBody>
-        {!isLoading &&
-          data.results?.map((task: Task) => (
-            <TableRow key={task.id}>
-              <TableCell className="py-4">{task.name}</TableCell>
-              <TableCell className="py-4">
-                <TaskStatusBadge status={task.status} />
-              </TableCell>
-              <TableCell className="py-4">{task.created_at}</TableCell>
-              <TableCell className="py-4">{task.updated_at}</TableCell>
-              <TableCell className="py-4">{task.completed_at}</TableCell>
-            </TableRow>
-          ))}
-      </TableBody>
-    </Table>
+        <TableBody>
+          {!isLoading &&
+            data.results?.map((task: Task) => (
+              <TableRow key={task.id}>
+                <TableCell className="py-4">{task.name}</TableCell>
+                <TableCell className="py-4">
+                  <StatusBadge status={task.status} />
+                </TableCell>
+                <TableCell className="py-4">{task.created_at}</TableCell>
+                <TableCell className="py-4">{task.updated_at}</TableCell>
+                <TableCell className="py-4">{task.completed_at}</TableCell>
+                <TableCell className="py-4 flex items-center gap-2">
+                  <TaskActionTooltiped
+                    title="View details"
+                    href={`/files/${task.job_id}`}
+                  >
+                    <TbExternalLink size={24} />
+                  </TaskActionTooltiped>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </TooltipProvider>
   );
 }
 
-interface TaskStatusBadgeProps {
-  status: string;
+interface TaskActionTooltipedProps {
+  className?: string;
+  title: string;
+  children: React.ReactNode;
+  href: string;
 }
 
-export function TaskStatusBadge({ status }: TaskStatusBadgeProps) {
-  const statusColor = {
-    queued: "bg-yellow-100",
-    started: "bg-blue-100",
-    completed: "bg-green-100",
-    failed: "bg-red-100",
-  }[status];
-
+export function TaskActionTooltiped({
+  className,
+  title,
+  children,
+  href,
+}: TaskActionTooltipedProps) {
   return (
-    <span
-      className={`px-2 py-1.5 rounded-full text-xs capitalize font-medium ${statusColor}`}
-    >
-      {status}
-    </span>
+    <Tooltip delayDuration={1}>
+      <TooltipTrigger>
+        <Button
+          asChild
+          variant="ghost"
+          size="icon"
+          className={cn(["hover:bg-zinc-200", className])}
+        >
+          <Link href={href}>{children}</Link>
+        </Button>
+      </TooltipTrigger>
+
+      <TooltipContent>
+        <span className="text-sm">{title}</span>
+      </TooltipContent>
+    </Tooltip>
   );
 }
