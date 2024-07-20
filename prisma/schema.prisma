@@ -6,47 +6,63 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Movie {
-  movieId   Int      @id @default(autoincrement())
+  movieId   Int      @id
   title     String
   genres    String
+  ratings   Rating[]
+  tags      Tag[]
+  links     Link?
+  genomeScores GenomeScore[]
 }
 
 model Rating {
   ratingId  Int      @id @default(autoincrement())
-  movieId   Int
   userId    Int
-  rating    Int
-  timestamp Int
+  movieId   Int
+  rating    Float    @db.DoublePrecision
+  timestamp DateTime @db.Timestamptz(6)
+  
+  movie     Movie    @relation(fields: [movieId], references: [movieId])
 }
 
 model Tag {
   tagId     Int      @id @default(autoincrement())
-  movieId   Int
   userId    Int
+  movieId   Int
   tag       String
-  timestamp Int
+  timestamp DateTime @db.Timestamptz(6)
+  
+  movie     Movie    @relation(fields: [movieId], references: [movieId])
 }
 
 model Link {
   linkId    Int      @id @default(autoincrement())
-  movieId   Int
-  imdbId    Int
-  tmdbId    Int
+  movieId   Int      @unique
+  imdbId    String
+  tmdbId    String
+  
+  movie     Movie    @relation(fields: [movieId], references: [movieId])
 }
 
 model GenomeScore {
-  scoreId  Int      @id @default(autoincrement())
+  scoreId   Int      @id @default(autoincrement())
   movieId   Int
   tagId     Int
-  relevance Float
+  relevance Float    @db.DoublePrecision
+
+  movie     Movie    @relation(fields: [movieId], references: [movieId])
+  tag       GenomeTag @relation(fields: [tagId], references: [tagId])
+
+  @@unique([movieId, tagId])
 }
 
 model GenomeTag {
   tagId     Int      @id @default(autoincrement())
   tag       String
+  scores    GenomeScore[]
 }

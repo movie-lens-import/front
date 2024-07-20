@@ -24,7 +24,7 @@ export function FileForm() {
   return (
     <Card className="w-full max-w-md p-3">
       <CardHeader>
-        <CardTitle>Update File</CardTitle>
+        <CardTitle>Insert a MovieLens 20M file</CardTitle>
         <CardDescription>
           Upload a .csv file to save to database
         </CardDescription>
