@@ -17,7 +17,7 @@ const NAV_ITEMS = [
 ];
 
 export const Header = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
   const toggleSidebarCollapse = () => {
     setIsCollapsed(!isCollapsed);

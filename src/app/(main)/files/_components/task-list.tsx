@@ -21,6 +21,8 @@ import { TbExternalLink } from "react-icons/tb";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Task } from "@/@types/task";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export function TaskList() {
   const { data, error, isLoading } = useSWR(
@@ -30,6 +32,39 @@ export function TaskList() {
       refreshInterval: 3000,
     }
   );
+
+  const renderSkeletonRows = () => {
+    return (
+      <>
+        {[...Array(5)].map((_, index) => (
+          <TableRow key={index}>
+            <TableCell className="py-4">
+              <Skeleton width={80} />
+            </TableCell>
+            <TableCell className="py-4">
+              <Skeleton width={60} />
+            </TableCell>
+            <TableCell className="py-4">
+              <Skeleton width={200} />
+            </TableCell>
+            <TableCell className="py-4">
+              <Skeleton width={200} />
+            </TableCell>
+            <TableCell className="py-4">
+              <Skeleton width={200} />
+            </TableCell>
+            <TableCell className="py-4 flex items-center gap-2">
+              <Skeleton width={24} height={24} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </>
+    );
+  };
+
+  if (error) {
+    return <div>Error loading tasks</div>;
+  }
 
   return (
     <TooltipProvider>
@@ -56,26 +91,27 @@ export function TaskList() {
         </TableHeader>
 
         <TableBody>
-          {!isLoading &&
-            data.results?.map((task: Task) => (
-              <TableRow key={task.id}>
-                <TableCell className="py-4">{task.name}</TableCell>
-                <TableCell className="py-4">
-                  <StatusBadge status={task.status} />
-                </TableCell>
-                <TableCell className="py-4">{task.created_at}</TableCell>
-                <TableCell className="py-4">{task.updated_at}</TableCell>
-                <TableCell className="py-4">{task.completed_at}</TableCell>
-                <TableCell className="py-4 flex items-center gap-2">
-                  <TaskActionTooltiped
-                    title="View details"
-                    href={`/files/${task.job_id}`}
-                  >
-                    <TbExternalLink size={24} />
-                  </TaskActionTooltiped>
-                </TableCell>
-              </TableRow>
-            ))}
+          {isLoading
+            ? renderSkeletonRows()
+            : data.results?.map((task: Task) => (
+                <TableRow key={task.id}>
+                  <TableCell className="py-4">{task.name}</TableCell>
+                  <TableCell className="py-4">
+                    <StatusBadge status={task.status} />
+                  </TableCell>
+                  <TableCell className="py-4">{task.created_at}</TableCell>
+                  <TableCell className="py-4">{task.updated_at}</TableCell>
+                  <TableCell className="py-4">{task.completed_at}</TableCell>
+                  <TableCell className="py-4 flex items-center gap-2">
+                    <TaskActionTooltiped
+                      title="View details"
+                      href={`/files/${task.job_id}`}
+                    >
+                      <TbExternalLink size={24} />
+                    </TaskActionTooltiped>
+                  </TableCell>
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
     </TooltipProvider>
