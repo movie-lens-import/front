@@ -9,6 +9,7 @@ export function useFileForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedTable, setSelectedTable] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const fileInput = useRef<HTMLInputElement>(null);
@@ -19,6 +20,10 @@ export function useFileForm() {
     }
     const file = event.target.files[0];
     setSelectedFile(file);
+  };
+
+  const handleTableChange = (value: string) => {
+    setSelectedTable(value);
   };
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -57,10 +62,22 @@ export function useFileForm() {
       formData.append("name", selectedFile.name);
       formData.append("chunkNumber", chunkNumber.toString());
       formData.append("totalChunks", totalChunks.toString());
+      formData.append("table", selectedTable);
 
       start = end;
 
-      await fileSubmit(formData);
+      try {
+        await fileSubmit(formData);
+      } catch (error: any) {
+        setIsLoading(false);
+        toast({
+          duration: 5000,
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+        return;
+      }
 
       setUploadProgress((prev) => prev + chunkProgress);
 
@@ -93,9 +110,11 @@ export function useFileForm() {
   return {
     isLoading,
     selectedFile,
+    selectedTable,
     uploadProgress,
     fileInput,
     handleFileChange,
     handleFormSubmit,
+    handleTableChange,
   };
 }

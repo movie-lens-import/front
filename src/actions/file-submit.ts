@@ -2,12 +2,23 @@
 
 import fs from "fs";
 import path from "path";
+import csv from "csv-parser";
+
+const tablesHeaders: Record<string, string[]> = {
+  ratings: ["userId", "movieId", "rating", "timestamp"],
+  movies: ["movieId", "title", "genres"],
+  genomeScores: ["movieId", "tagId", "relevance"],
+  genomeTags: ["tagId", "tag"],
+  links: ["movieId", "imdbId", "tmdbId"],
+  tags: ["userId", "movieId", "tag", "timestamp"],
+};
 
 export default async function fileSubmit(formData: FormData) {
   const chunk = formData.get("file") as File;
   const name = formData.get("name") as string;
   const chunkNumber = Number(formData.get("chunkNumber"));
   const totalChunks = Number(formData.get("totalChunks"));
+  const tableName = formData.get("table") as string;
 
   const chunkDir = path.join(process.cwd(), "/chunks");
 
@@ -20,7 +31,17 @@ export default async function fileSubmit(formData: FormData) {
   const chunkBuffer = Buffer.from(await chunk.arrayBuffer());
   fs.writeFileSync(chunkFilePath, chunkBuffer);
 
-  if (chunkNumber == totalChunks - 1) {
+  if (chunkNumber === 0) {
+    const headersValid = await checkHeaders(chunkFilePath, tableName);
+    if (!headersValid) {
+      fs.unlinkSync(chunkFilePath);
+      throw new Error(
+        `CSV headers are invalid for table ${tableName}. Processing stopped.`
+      );
+    }
+  }
+
+  if (chunkNumber === totalChunks - 1) {
     const filePath = path.join(chunkDir, name);
     const writeStream = fs.createWriteStream(filePath);
 
@@ -35,8 +56,24 @@ export default async function fileSubmit(formData: FormData) {
 
     await fetch(`${process.env.FLASK_API_URL}/convert`, {
       method: "POST",
-      body: JSON.stringify({ name, table: "ratings" }),
+      body: JSON.stringify({ name, table: tableName }),
       headers: { "Content-Type": "application/json" },
     });
   }
+}
+
+async function checkHeaders(filePath: string, table: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const headers: string[] = [];
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("headers", (headerList) => {
+        headers.push(...headerList);
+        const headersValid = tablesHeaders[table].every((header) =>
+          headers.includes(header)
+        );
+        resolve(headersValid);
+      })
+      .on("error", (error) => reject(error));
+  });
 }

@@ -11,14 +11,23 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { useFileForm } from "./file-form.hook";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function FileForm() {
   const {
     handleFormSubmit,
     handleFileChange,
+    handleTableChange,
     isLoading,
     uploadProgress,
     fileInput,
+    selectedTable,
   } = useFileForm();
 
   return (
@@ -30,7 +39,26 @@ export function FileForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleFormSubmit} className="space-y-2">
+          <Select onValueChange={handleTableChange} value={selectedTable}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a valid table to insert data" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="ratings">Ratings</SelectItem>
+              <SelectItem value="movies">Movies</SelectItem>
+              <SelectItem value="genomeScores">Genome Scores</SelectItem>
+              <SelectItem value="genomeTags">Genome Tags</SelectItem>
+              <SelectItem value="links">Links</SelectItem>
+              <SelectItem value="tags">Tags</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <span className="pl-0.5 text-xs font-medium text-muted-foreground">
+            You must input files that match the selected table
+          </span>
+
           <Input
             type="file"
             name="file"
