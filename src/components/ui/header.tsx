@@ -33,7 +33,7 @@ export const Header = () => {
     <TooltipProvider>
       <header
         className={cn([
-          "relative bg-zinc-100 pt-6 flex-col h-screen flex w-full max-w-xs border-r border-border transition-all duration-300 ease-in-out",
+          "fixed bg-zinc-100 pt-6 flex-col h-screen flex w-full max-w-xs border-r border-border transition-all duration-300 ease-in-out",
           isCollapsed ? "max-w-20" : "max-w-xs",
         ])}
       >

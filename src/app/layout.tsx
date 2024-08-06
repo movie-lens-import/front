@@ -19,9 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn([inter.className, "flex"])}>
+      <body className={cn([inter.className, ""])}>
         <Header />
-        {children}
+        <div className="pl-20">{children}</div>
         <Toaster />
       </body>
     </html>
