@@ -39,7 +39,7 @@ export function FileForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleFormSubmit} className="space-y-2">
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-2">
           <Select onValueChange={handleTableChange} value={selectedTable}>
             <SelectTrigger>
               <SelectValue placeholder="Select a valid table to insert data" />
@@ -48,8 +48,8 @@ export function FileForm() {
             <SelectContent>
               <SelectItem value="ratings">Ratings</SelectItem>
               <SelectItem value="movies">Movies</SelectItem>
-              <SelectItem value="genomeScores">Genome Scores</SelectItem>
-              <SelectItem value="genomeTags">Genome Tags</SelectItem>
+              <SelectItem value="genomescores">Genome Scores</SelectItem>
+              <SelectItem value="genometags">Genome Tags</SelectItem>
               <SelectItem value="links">Links</SelectItem>
               <SelectItem value="tags">Tags</SelectItem>
             </SelectContent>
@@ -77,7 +77,7 @@ export function FileForm() {
           {uploadProgress > 0 && uploadProgress < 100 && (
             <div
               className={cn([
-                "z-10 fixed top-0 left-0 w-full h-2 bg-secondary",
+                "z-10 mt-0 fixed top-0 left-0 w-full h-2 bg-secondary",
               ])}
             >
               <div

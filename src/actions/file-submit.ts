@@ -7,8 +7,8 @@ import csv from "csv-parser";
 const tablesHeaders: Record<string, string[]> = {
   ratings: ["userId", "movieId", "rating", "timestamp"],
   movies: ["movieId", "title", "genres"],
-  genomeScores: ["movieId", "tagId", "relevance"],
-  genomeTags: ["tagId", "tag"],
+  genomescores: ["movieId", "tagId", "relevance"],
+  genometags: ["tagId", "tag"],
   links: ["movieId", "imdbId", "tmdbId"],
   tags: ["userId", "movieId", "tag", "timestamp"],
 };
