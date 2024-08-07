@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: { tmdbid: number } }) {
         <Image
           src={`${process.env.NEXT_PUBLIC_IMAGE_API_URL}${movie.poster_path}`}
           alt={movie.title}
-          width={500}
+          width={450}
           height={400}
           className="shadow-2xl"
         />
@@ -46,7 +46,7 @@ export default async function Page({ params }: { params: { tmdbid: number } }) {
             <PersonList title="Director" persons={directors} role="Director" />
             <PersonList title="Writers" persons={writers} role="Writer" />
             <PersonList title="Actors" persons={actors} role="Actor" />
-            <aside className="absolute right-0 top-0 space-y-4">
+            <aside className="space-y-4 lg:absolute lg:right-0 lg:top-0">
               <InfoCard
                 title="Genres"
                 items={movie.genres.map((g) => g.name)}
