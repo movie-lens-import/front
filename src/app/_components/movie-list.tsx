@@ -36,6 +36,12 @@ interface MoviesStruct {
 }
 
 interface MovieListProps {
+  filters?: {
+    genre?: string | null;
+    year?: string | null;
+    rating?: string | null;
+    rating_counts?: string | null;
+  };
   onPaginationChange: (
     hasNext: boolean,
     hasPrevious: boolean,
@@ -43,23 +49,28 @@ interface MovieListProps {
   ) => void;
 }
 
-export function MovieList({ onPaginationChange }: MovieListProps) {
+export function MovieList({ onPaginationChange, filters }: MovieListProps) {
   const searchParams = useSearchParams();
   const limit = Number(searchParams.get("movies") || 30);
   const offset = Number(searchParams.get("page") || 0);
 
-  const { data, error, isLoading } = useSWR<MoviesStruct>(
-    `${process.env.NEXT_PUBLIC_FLASK_API_URL}/movies?limit=${limit}&offset=${
-      offset * limit
-    }`,
-    fetcher
-  );
+  const apiUrl = new URL(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/movies`);
+  apiUrl.searchParams.append("limit", String(limit));
+  apiUrl.searchParams.append("offset", String(offset * limit));
+
+  if (filters?.genre) apiUrl.searchParams.append("genre", filters.genre);
+  if (filters?.year) apiUrl.searchParams.append("year", filters.year);
+  if (filters?.rating) apiUrl.searchParams.append("rating", filters.rating);
+  if (filters?.rating_counts)
+    apiUrl.searchParams.append("ratings_count", filters.rating_counts);
+
+  const { data, error, isLoading } = useSWR<MoviesStruct>(apiUrl.href, fetcher);
 
   if (data) {
     onPaginationChange(
       !!data.next,
       !!data.previous,
-      Math.floor(data.count / limit)
+      Math.ceil(data.count / limit)
     );
   }
 
@@ -75,13 +86,17 @@ export function MovieList({ onPaginationChange }: MovieListProps) {
               <Skeleton width={600} />
             </TableCell>
             <TableCell className="py-4">
-              <Skeleton width={60} />
+              <Skeleton width={100} />
             </TableCell>
             <TableCell className="py-4">
-              <Skeleton width={60} />
+              <Skeleton width={100} />
             </TableCell>
             <TableCell className="py-4">
               <Skeleton width={200} />
+            </TableCell>
+
+            <TableCell className="py-4">
+              <Skeleton width={60} />
             </TableCell>
           </TableRow>
         ))}
